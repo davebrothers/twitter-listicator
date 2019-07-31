@@ -1,0 +1,16 @@
+{
+  "name": "twitter-listicator",
+  "version": "0.0.1",
+  "description": "Twitter listicator",
+  "main": "listicate-from-file.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "line-reader": "^0.4.0",
+    "minimist": "^1.2.0",
+    "twitter": "^1.7.1"
+  }
+}
