@@ -24,30 +24,38 @@ var client = new Twitter({
   access_token_secret: args.accessTokenSecret
 });
 
-client.get("lists/list", function(e, t, s) {
+client.get("lists/list", onGetListsCompleted);
+
+function onGetListsCompleted(error, data, response) {
   if (!t.some(el => el.name.toLowerCase() == args.listName.toLowerCase())) {
-    console.log(`Creating list ${args.listName}...`);
+    console.log(`>>>>> Creating list ${args.listName}...`);
     client.post(
       "lists/create",
       { name: args.listName, mode: "public" },
-      (e, t, s) => {
-        if (e) {
-          console.error(`Error: ${e.toString()}`);
-          return;
-        }
-
-        loadList(t);
-      }
+      onCreateListCompleted
     );
   } else {
     throw `List ${args.listName} already exists`;
   }
-});
+}
+
+function onCreateListCompleted(error, data, response) {
+  console.log(">>>>> List creation completed...");
+  if (error) {
+    console.error(`Error: ${error.toString()}`);
+    return;
+  }
+
+  loadList(data);
+}
 
 function loadList(list) {
+  console.log(list);
+  console.log(">>>>> Preparing handles...");
+
   let handles = [];
 
-  linereader.eachLine(`./${fileName}`, (line, last) => {
+  linereader.eachLine(`./${fileName}`, (line, isLast) => {
     handles.push(
       line
         .split("https://twitter.com/")
@@ -55,15 +63,17 @@ function loadList(list) {
         .trim()
     );
 
-    if (last) {
-      console.log(handles.join(","));
+    if (isLast) {
+      console.log(handles.join(", "));
+
+      console.log(">>>>> Loading list...");
 
       client.post(
         "lists/members/create_all",
-        { list_id: list.id, screen_name: handles.join(",") },
+        { list_id: list.id_str, screen_name: handles.join(",") },
         (e, d, r) => {
           if (e) console.error(JSON.stringify(e));
-          console.log(r);
+          else console.log("ok!");
         }
       );
     }
