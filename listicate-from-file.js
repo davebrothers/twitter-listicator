@@ -27,7 +27,7 @@ var client = new Twitter({
 client.get("lists/list", onGetListsCompleted);
 
 function onGetListsCompleted(error, data, response) {
-  if (!t.some(el => el.name.toLowerCase() == args.listName.toLowerCase())) {
+  if (!data.some(el => el.name.toLowerCase() == args.listName.toLowerCase())) {
     console.log(`>>>>> Creating list ${args.listName}...`);
     client.post(
       "lists/create",
