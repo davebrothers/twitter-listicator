@@ -1,7 +1,8 @@
-const Twitter = require("twitter");
-const args = require("minimist")(process.argv.slice(2));
-const linereader = require("line-reader");
+import Twitter, { Callback } from "twitter";
+import minimist from "minimist";
+import * as lineReader from "line-reader";
 
+const args: minimist.ParsedArgs = minimist(process.argv.slice(2));
 const fileName = args.file || "handles.txt";
 
 if (
@@ -17,17 +18,19 @@ if (!args.listName) {
   throw "Provide a name for the list to be created";
 }
 
-var client = new Twitter({
+const client: Twitter = new Twitter({
   consumer_key: args.consumerKey,
   consumer_secret: args.consumerSecret,
   access_token_key: args.accessTokenKey,
   access_token_secret: args.accessTokenSecret
 });
 
-client.get("lists/list", onGetListsCompleted);
-
-function onGetListsCompleted(error, data, response) {
-  if (!data.some(el => el.name.toLowerCase() == args.listName.toLowerCase())) {
+const onGetListsCompleted: Callback = function(error, data, response) {
+  if (
+    !data.some(
+      (el: any) => el.name.toLowerCase() == args.listName.toLowerCase()
+    )
+  ) {
     console.log(`>>>>> Creating list ${args.listName}...`);
     client.post(
       "lists/create",
@@ -37,9 +40,9 @@ function onGetListsCompleted(error, data, response) {
   } else {
     throw `List ${args.listName} already exists`;
   }
-}
+};
 
-function onCreateListCompleted(error, data, response) {
+const onCreateListCompleted: Callback = function(error, data, response) {
   console.log(">>>>> List creation completed...");
   if (error) {
     console.error(`Error: ${error.toString()}`);
@@ -47,20 +50,20 @@ function onCreateListCompleted(error, data, response) {
   }
 
   loadList(data);
-}
+};
 
-function loadList(list) {
+const loadList = function(list: any) {
   console.log(list);
   console.log(">>>>> Preparing handles...");
 
-  let handles = [];
+  let handles: Array<any> = [];
 
-  linereader.eachLine(`./${fileName}`, (line, isLast) => {
+  lineReader.eachLine(`./${fileName}`, (line: string, isLast: boolean | undefined) => {
     handles.push(
       line
+        .trim()
         .split("https://twitter.com/")
         .pop()
-        .trim()
     );
 
     if (isLast) {
@@ -79,3 +82,5 @@ function loadList(list) {
     }
   });
 }
+
+client.get("lists/list", onGetListsCompleted);

@@ -4,7 +4,10 @@
   "description": "Twitter listicator",
   "main": "listicate-from-file.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "copy": "cp ./src/handles.txt ./dist/handles.txt",
+    "start": "npm run build && npm run copy && node ./dist/listicate.js"
   },
   "author": "",
   "license": "ISC",
@@ -12,5 +15,11 @@
     "line-reader": "^0.4.0",
     "minimist": "^1.2.0",
     "twitter": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/line-reader": "0.0.28",
+    "@types/minimist": "^1.2.0",
+    "@types/twitter": "^1.7.0",
+    "typescript": "^3.6.4"
   }
 }
